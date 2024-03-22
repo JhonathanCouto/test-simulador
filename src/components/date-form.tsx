@@ -4,10 +4,11 @@ import { useDate } from "@/date/use-date";
 import { DateProps } from "@/types/date";
 import { DatePicker as MuiDatePicker } from '@mui/x-date-pickers';
 import TextField from '@mui/material/TextField';
-import { addDays, differenceInCalendarDays } from 'date-fns';
+import { differenceInDays, differenceInCalendarDays } from 'date-fns';
 
 export function DateForm() {
   const { dates, setDates } = useDate();
+  const { startDate, endDate, warrantyValue } = dates;
 
   const handleDateChange = (date: Date | null, isStartDate: boolean) => {
     if (isStartDate) {
@@ -16,19 +17,14 @@ export function DateForm() {
         startDate: date,
       }));
     } else {
-      setDates(prevDates => ({
-        ...prevDates,
-        endDate: date,
-      }));
-
-      if (prevDates.startDate && date) {
-        const diffDays = differenceInCalendarDays(date, prevDates.startDate);
-        setDates(prevDates => ({
+      setDates(prevDates => {
+        const numberOfDays = date && prevDates.startDate ? differenceInCalendarDays(date, prevDates.startDate) : 0;
+        return {
           ...prevDates,
           endDate: date,
-          numberOfDays: diffDays >= 0 ? diffDays : 0, // Prevent negative values
-        }));
-      }
+          numberOfDays: numberOfDays >= 0 ? numberOfDays : 0,
+        };
+      });
     }
   };
 
@@ -39,21 +35,33 @@ export function DateForm() {
     }));
   };
 
+  const calculateCoverageDays = (startDate: string | number | Date | null, endDate: string | number | Date | null) => {
+    return startDate && endDate ? differenceInDays(new Date(endDate), new Date(startDate)) : '';
+  };
+
   return (
     <div>
       <MuiDatePicker
         label="Inicio Vigência"
-        value={dates.startDate}
+        value={startDate}
         onChange={(date) => handleDateChange(date, true)}
+      />
+      <TextField 
+        label="Dia(s)"
+        value={calculateCoverageDays(startDate, endDate)}
+        inputProps={{
+          readOnly: true,
+        }}
       />
       <MuiDatePicker
         label="Final Vigência"
-        value={dates.endDate}
+        value={endDate}
+        disablePast
         onChange={(date) => handleDateChange(date, false)}
       />
       <TextField
         label="Valor Garantia"
-        value={dates.warrantyValue || ''}
+        value={warrantyValue || ''}
         onChange={handleWarrantyChange}
       />
     </div>

@@ -10,9 +10,9 @@ import { DateForm } from '@/components/date-form';
 
 export default function Home() {
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" >
       <Box sx={{ flexGrow: 1, my: 4 }}>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} >
           <Grid item xs={8}>
             <Card>
               <CardContent>

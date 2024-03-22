@@ -25,12 +25,12 @@ export default function RootLayout({
       <body>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>
-            <LocalizationProvider>
-              <DateProvider>
+            <DateProvider>
+              <LocalizationProvider>
                 <CssBaseline />
                 {children}
-              </DateProvider>
-            </LocalizationProvider>
+              </LocalizationProvider>
+            </DateProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

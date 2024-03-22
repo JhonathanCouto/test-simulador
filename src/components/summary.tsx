@@ -4,44 +4,37 @@ import { useDate } from '@/date/use-date';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { format, differenceInCalendarDays, isValid } from 'date-fns';
+import { differenceInDays } from 'date-fns';
 
 export function Summary() {
-  const { dates } = useDate();
+  const { dates: { startDate, endDate, warrantyValue } } = useDate();
 
-  console.log(dates)
-
-  const formatDate = (date?: Date | null) => {
-    return date && isValid(date) ? format(date, 'dd/MM/yyyy') : 'N/A';
+  const formatCurrency = (value: string | null) => {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value));
   };
 
-  const calculateDiffDays = (startDate?: Date | null, endDate?: Date | null) => {
-    if (startDate && endDate && isValid(startDate) && isValid(endDate)) {
-      const diffDays = differenceInCalendarDays(endDate, startDate);
-      return diffDays >= 0 ? diffDays : 'N/A';
-    }
-    return 'N/A';
+  const formatDate = (date: string | number | Date | null) => {
+    return date ? new Date(date).toLocaleDateString() : '';
   };
 
-  const warrantyValue = dates?.warrantyValue ?? 'N/A';
-  const startDate = formatDate(dates?.startDate);
-  const endDate = formatDate(dates?.endDate);
-  const diffDays = calculateDiffDays(dates?.startDate, dates?.endDate);
+  const calculateCoverageDays = (startDate: string | number | Date | null, endDate: string | number | Date | null) => {
+    return startDate && endDate ? differenceInDays(new Date(endDate), new Date(startDate)) : '';
+  };
 
   return (
     <Card>
       <CardContent>
         <Typography variant="body1">
-          Valor Garantia: {warrantyValue}
+          Valor Garantia: {formatCurrency(warrantyValue)}
         </Typography>
         <Typography variant="body1">
-          Inicio Vigência: {startDate}
+          Inicio Vigência: {formatDate(startDate)}
         </Typography>
         <Typography variant="body1">
-          Final Vigência: {endDate}
+          Final Vigência: {formatDate(endDate)}
         </Typography>
         <Typography variant="body1">
-          N Dias(s) Cobertura: {diffDays}
+          N Dias(s) Cobertura: {calculateCoverageDays(startDate, endDate)}
         </Typography>
       </CardContent>
     </Card>
